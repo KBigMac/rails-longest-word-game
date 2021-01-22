@@ -4,9 +4,19 @@ require 'json'
 class GamesController < ApplicationController
   # TODO: generate random grid of letters
   def new
-    @letters = Array.new(10) { ('A'..'Z').to_a.sample }
-    @start_time = Time.now
+    @letters = Array.new(5) { VOWELS.sample }
+    @letters += Array.new(5) { (('A'..'Z').to_a - VOWELS).sample }
+    @letters.shuffle!
   end
+
+  def score
+    @letters = params[:letters].split
+    @word = (params[:word] || "").upcase
+    @included = included?(@word, @letters)
+    @english_word = english_word?(@word)
+  end
+
+  private
 
   def english_word?(word)
     response = open("https://wagon-dictionary.herokuapp.com/#{word}")
@@ -18,11 +28,7 @@ class GamesController < ApplicationController
     word.chars.all? { |letter| word.count(letter) <= letters.count(letter) }
   end
 
-  def score
-    @end_time = Time.now
-    @word = params[:word]
-    @letters = params[:letters].split
-    @inlcuded = included?(@word, @letters)
-    @english_word = english_word?(@word)
+  def attempt
+    # code for attempt method
   end
 end
